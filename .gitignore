@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+.env
+.env.*
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# PyInstaller
+*.spec
+
+# Logs
+logs/
+*.log
+
+# Tests
+.coverage*
+htmlcov/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Cache
+.cache/
+
+# Models / large assets (adjust if you want them tracked)
+models/
+*.pt
+*.onnx
+
+# Videos / data samples
+videos/
+*.mp4
+*.avi
+*.mov
+
+# Generated outputs
+outputs/
+
+# OS
+.DS_Store
+Thumbs.db

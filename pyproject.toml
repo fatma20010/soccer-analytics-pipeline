@@ -1,0 +1,32 @@
+[project]
+name = "soccer-analytics"
+version = "0.1.0"
+description = "Real-time football analytics pipeline (CPU-friendly)"
+authors = [ { name = "Your Name" } ]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = []  # runtime deps pulled via requirements.txt; keep minimal here
+
+[project.optional-dependencies]
+# If you want pip install soccer-analytics[full]
+full = [
+  "ultralytics",
+  "opencv-python",
+  "supervision",
+  "numpy",
+  "scikit-learn",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+# (Not used now; version static)

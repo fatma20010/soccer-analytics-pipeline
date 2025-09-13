@@ -1,0 +1,25 @@
+# Core inference (CPU-friendly; user installs torch separately for their platform)
+ultralytics==8.2.103
+opencv-python==4.9.0.80
+supervision==0.18.0
+numpy>=1.24,<2.0
+scipy>=1.10
+scikit-learn>=1.3
+pandas>=2.0
+pyyaml>=6.0
+rapidfuzz>=3.5
+filterpy>=1.4.5
+shapely>=2.0
+# ByteTrack dependencies (ultralytics integrates a tracker; can add lapx for speed)
+lapx>=0.5.5
+# Visualization / CLI
+rich>=13.7
+tqdm>=4.66
+# Optional for line detection / geometry
+sympy>=1.12
+# Testing
+pytest>=8.0
+
+# NOTE: Install PyTorch manually for CPU:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+# Or follow https://pytorch.org/get-started/locally/ for latest instructions.
