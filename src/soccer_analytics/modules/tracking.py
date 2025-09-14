@@ -110,25 +110,32 @@ class TrackManager:
             h = y2 - y1
             tlwhs.append([x1, y1, w, h])
             scores.append(det['conf'])
+        
+        # Handle empty detections
+        if not tlwhs:
+            return []
+            
         tlwhs = np.asarray(tlwhs, dtype=float)
         scores = np.asarray(scores, dtype=float)
         try:
-            # Older internal API variant (custom) may accept tlwhs, scores, classes
-            online_targets = self.tracker.update(tlwhs, scores, np.zeros(len(scores)))
-        except TypeError:
-            # Newer Ultralytics BYTETracker likely expects 'dets' shaped (N,6) [x1,y1,x2,y2,score,cls]
+            # Newer Ultralytics BYTETracker expects 'dets' shaped (N,6) [x1,y1,x2,y2,score,cls]
+            xyxy = np.zeros((len(tlwhs), 4))
+            # convert tlwh -> xyxy
+            # tlwh: x,y,w,h
+            xyxy[:,0] = tlwhs[:,0]  # x1
+            xyxy[:,1] = tlwhs[:,1]  # y1
+            xyxy[:,2] = tlwhs[:,0] + tlwhs[:,2]  # x2
+            xyxy[:,3] = tlwhs[:,1] + tlwhs[:,3]  # y2
+            dets = np.concatenate([xyxy, scores.reshape(-1,1), np.zeros((len(scores),1))], axis=1)
+            online_targets = self.tracker.update(dets)
+        except (TypeError, AttributeError) as e:
+            # Fallback to older API or SimpleTracker
             try:
-                xyxy = np.zeros_like(tlwhs)
-                # convert tlwh -> xyxy
-                # tlwh: x,y,w,h
-                xyxy[:,0] = tlwhs[:,0]
-                xyxy[:,1] = tlwhs[:,1]
-                xyxy[:,2] = tlwhs[:,0] + tlwhs[:,2]
-                xyxy[:,3] = tlwhs[:,1] + tlwhs[:,3]
-                dets = np.concatenate([xyxy, scores.reshape(-1,1), np.zeros((len(scores),1))], axis=1)
-                online_targets = self.tracker.update(dets)
+                # Try older internal API variant (custom) may accept tlwhs, scores, classes
+                online_targets = self.tracker.update(tlwhs, scores, np.zeros(len(scores)))
             except Exception:
                 # Final fallback: switch to SimpleTracker mid-run
+                print(f"⚠️  BYTETracker failed ({e}), switching to SimpleTracker")
                 self.use_fallback = True
                 self.tracker = SimpleTracker(CONFIG.tracking.track_max_age, CONFIG.tracking.track_iou_threshold)
                 return self.tracker.update(player_detections)

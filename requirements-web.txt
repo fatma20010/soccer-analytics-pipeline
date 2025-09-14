@@ -1,0 +1,9 @@
+# Web API requirements for Soccer Analytics Pipeline
+flask==2.3.3
+flask-socketio==5.3.6
+flask-cors==4.0.0
+python-socketio==5.9.0
+eventlet==0.33.3
+
+# Include all existing requirements
+-r requirements.txt
