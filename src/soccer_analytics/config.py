@@ -59,7 +59,7 @@ class PipelineConfig:
     frame_resize_width: int | None = 960  # resize frames to this width maintaining aspect
     show_visualization: bool = True
     debug: bool = False
-    detect_interval: int = 2  # run full detection every N frames (tracking in between)
+    detect_interval: int = 3  # run full detection every N frames (tracking in between)
     team_update_interval: int = 15  # run KMeans re-clustering every N frames
 
 CONFIG = PipelineConfig()

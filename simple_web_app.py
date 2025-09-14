@@ -22,10 +22,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 try:
     from soccer_analytics.pipeline import SoccerPipeline
+    from soccer_analytics.ml_predictor import MatchOutcomePredictor
     PIPELINE_AVAILABLE = True
+    ML_PREDICTOR_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Soccer analytics pipeline not available: {e}")
     PIPELINE_AVAILABLE = False
+    ML_PREDICTOR_AVAILABLE = False
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'soccer_analytics_secret_key'
@@ -34,12 +37,21 @@ CORS(app)  # Enable CORS for React frontend
 
 # Global variables for pipeline state
 current_pipeline = None
+ml_predictor = None
 processing_thread: Optional[threading.Thread] = None
 is_processing = False
 analysis_results: Dict[str, Any] = {}
 uploaded_video_path: Optional[str] = None
 current_frame_data: Optional[str] = None  # Base64 encoded current frame
 current_stats_data: Optional[Dict] = None  # Current analysis stats
+
+# Initialize ML predictor
+if ML_PREDICTOR_AVAILABLE:
+    try:
+        ml_predictor = MatchOutcomePredictor()
+    except Exception as e:
+        print(f"Warning: Could not initialize ML predictor: {e}")
+        ML_PREDICTOR_AVAILABLE = False
 
 class MockPipelineAdapter:
     """Mock adapter for testing when pipeline is not available"""
@@ -208,8 +220,14 @@ def process_video_real():
                 cv2.putText(processed_frame, f'Frame {frame_count}', (10, 30), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
                 
-                # Save current frame for streaming
-                _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                # Resize frame for web streaming (reduce to 640x360 for performance)
+                height, width = processed_frame.shape[:2]
+                new_width = 640
+                new_height = int((new_width * height) / width)
+                resized_frame = cv2.resize(processed_frame, (new_width, new_height))
+                
+                # Save current frame for streaming with lower quality
+                _, buffer = cv2.imencode('.jpg', resized_frame, [cv2.IMWRITE_JPEG_QUALITY, 35])
                 frame_base64 = base64.b64encode(buffer).decode('utf-8')
                 
                 # Store current frame and stats globally for API access
@@ -228,6 +246,36 @@ def process_video_real():
         
         # Get final results
         analysis_results = current_pipeline.get_final_results()
+        
+        # Add ML predictions
+        if ML_PREDICTOR_AVAILABLE and ml_predictor:
+            try:
+                ml_prediction = ml_predictor.predict_match_outcome(analysis_results)
+                analysis_results['matchPrediction'] = ml_prediction
+                print(f"🤖 ML Prediction: {ml_prediction['predicted_outcome']} (confidence: {ml_prediction['confidence']:.2f})")
+                print(f"🔍 Complete prediction data: {ml_prediction}")
+            except Exception as e:
+                print(f"Warning: ML prediction failed: {e}")
+                analysis_results['matchPrediction'] = {
+                    'home_win_probability': 0.33,
+                    'draw_probability': 0.34,
+                    'away_win_probability': 0.33,
+                    'predicted_outcome': 'Draw',
+                    'confidence': 0.34,
+                    'model_used': 'error',
+                    'error': str(e)
+                }
+        else:
+            print("⚠️ ML predictor not available, adding default prediction")
+            analysis_results['matchPrediction'] = {
+                'home_win_probability': 0.33,
+                'draw_probability': 0.34,
+                'away_win_probability': 0.33,
+                'predicted_outcome': 'Draw',
+                'confidence': 0.34,
+                'model_used': 'unavailable'
+            }
+        
         print("✅ Real analysis complete!")
         
         cap.release()
@@ -339,6 +387,45 @@ def get_current_frame():
         'stats': current_stats_data or {},
         'timestamp': time.time()
     })
+
+@app.route('/api/predict_outcome', methods=['POST'])
+def predict_match_outcome():
+    """Get ML prediction for match outcome based on current analysis"""
+    if not ML_PREDICTOR_AVAILABLE or not ml_predictor:
+        return jsonify({
+            'error': 'ML predictor not available',
+            'fallback_prediction': {
+                'home_win_probability': 0.33,
+                'draw_probability': 0.34,
+                'away_win_probability': 0.33,
+                'predicted_outcome': 'Draw',
+                'confidence': 0.34,
+                'model_used': 'unavailable'
+            }
+        }), 503
+    
+    try:
+        # Get analysis data from request or use current results
+        analysis_data = request.get_json() if request.is_json else analysis_results
+        
+        if not analysis_data:
+            return jsonify({'error': 'No analysis data available'}), 400
+        
+        prediction = ml_predictor.predict_match_outcome(analysis_data)
+        return jsonify(prediction)
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Prediction failed: {str(e)}',
+            'fallback_prediction': {
+                'home_win_probability': 0.33,
+                'draw_probability': 0.34,
+                'away_win_probability': 0.33,
+                'predicted_outcome': 'Draw',
+                'confidence': 0.34,
+                'model_used': 'error'
+            }
+        }), 500
 
 if __name__ == '__main__':
     # Create necessary directories

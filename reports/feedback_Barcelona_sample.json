@@ -1,0 +1,112 @@
+{
+  "team": "Barcelona",
+  "source": "AI Analysis Engine",
+  "matches": [
+    {
+      "match": "Barcelona vs Real Madrid, 2025-01-15",
+      "competition": "La Liga",
+      "analysis": {
+        "weaknesses": [
+          "Defensive transitions were slow",
+          "Vulnerable to counter-attacks",
+          "Set-piece defending needs improvement"
+        ],
+        "strengths": [
+          "Excellent ball possession (68%)",
+          "Creative midfield play",
+          "Strong passing accuracy (89%)",
+          "Effective pressing in opponent's half"
+        ],
+        "successful_tactics": [
+          "High pressing in first 30 minutes",
+          "Quick short passes in midfield",
+          "Wing play with overlapping fullbacks",
+          "False 9 position creating space"
+        ],
+        "best_placements": [
+          "Pedri in central midfield",
+          "Gavi as box-to-box midfielder",
+          "Lewandowski as target man",
+          "Ter Stegen's distribution from goal"
+        ],
+        "overall_feedback": "Strong performance with dominant possession but defensive vulnerabilities exposed in transition. Creative attacking play compensated for defensive lapses. Need to improve defensive organization and set-piece defending."
+      }
+    },
+    {
+      "match": "Barcelona vs Atletico Madrid, 2025-01-08",
+      "competition": "La Liga",
+      "analysis": {
+        "weaknesses": [
+          "Struggled against physical play",
+          "Limited creativity in final third",
+          "Defensive line too high"
+        ],
+        "strengths": [
+          "Solid defensive structure",
+          "Good ball retention",
+          "Effective counter-pressing",
+          "Strong individual performances"
+        ],
+        "successful_tactics": [
+          "Compact defensive block",
+          "Quick transitions from defense",
+          "Wing-back overlaps",
+          "Midfield pressing triggers"
+        ],
+        "best_placements": [
+          "Araujo as center-back",
+          "Frenkie de Jong in deep midfield",
+          "Raphinha on right wing",
+          "Marc-Andre ter Stegen in goal"
+        ],
+        "overall_feedback": "Tactical battle with moments of quality. Defensive solidity was key, but attacking creativity was limited. Physical approach from opponents caused problems. Need more variety in attacking play."
+      }
+    },
+    {
+      "match": "Barcelona vs Sevilla, 2025-01-01",
+      "competition": "La Liga",
+      "analysis": {
+        "weaknesses": [
+          "Slow build-up play",
+          "Lack of width in attack",
+          "Defensive concentration lapses"
+        ],
+        "strengths": [
+          "Clinical finishing",
+          "Strong midfield control",
+          "Effective pressing",
+          "Good set-piece delivery"
+        ],
+        "successful_tactics": [
+          "Patient build-up from back",
+          "Midfield overloads",
+          "Quick one-touch passing",
+          "Set-piece routines"
+        ],
+        "best_placements": [
+          "Busquets as deep-lying playmaker",
+          "Pedri in advanced midfield",
+          "Lewandowski as penalty box striker",
+          "Jordi Alba as attacking fullback"
+        ],
+        "overall_feedback": "Comfortable victory with controlled performance. Midfield dominance was key to success. Clinical finishing made the difference. Need to maintain consistency in defensive concentration."
+      }
+    }
+  ],
+  "team_summary": {
+    "avg_insights": [
+      "Strong possession-based playing style with 65% average ball control",
+      "Creative midfield with excellent passing accuracy (87% average)",
+      "Defensive transitions need improvement - vulnerable to counter-attacks",
+      "Set-piece defending requires attention and tactical adjustments",
+      "Physical play from opponents causes tactical challenges"
+    ],
+    "priority_actions": [
+      "Improve defensive transition speed and organization",
+      "Develop more direct attacking options for counter-attacking situations",
+      "Strengthen set-piece defending with specific training routines",
+      "Add physical presence in midfield for better balance",
+      "Maintain possession-based approach while adding tactical variety"
+    ]
+  }
+}
